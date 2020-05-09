@@ -1645,7 +1645,6 @@ public:
 		if (!bool(p_preset->get("custom_template/use_custom_build"))) {
 			bool dvalid = exists_export_template("android_debug.apk", &err);
 			bool rvalid = exists_export_template("android_release.apk", &err);
-			bool bvalid = exists_export_template("android_build.zip", &err);
 
 			if (p_preset->get("custom_template/debug") != "") {
 				dvalid = FileAccess::exists(p_preset->get("custom_template/debug"));
@@ -1659,17 +1658,20 @@ public:
 					err += TTR("Custom release template not found.") + "\n";
 				}
 			}
+
+
+			valid = dvalid || rvalid;
+		} else {
 			//custom template
 			if (p_preset->get(" custom_template/custom_android_build_template") != "") {
-				bvalid = FileAccess::exists(p_preset->get("custom_template/custom_android_build_template"));
-				if (!bvalid) {
+				valid = FileAccess::exists(p_preset->get("custom_template/custom_android_build_template"));
+				if (!valid) {
 					err += TTR("Custom build template not found.") + "\n";
 				}
 			}
-
-			valid = dvalid || rvalid || bvalid;
-		} else {
-			valid = exists_export_template("android_source.zip", &err);
+			else{
+				valid = exists_export_template("android_source.zip", &err);
+			}
 		}
 		r_missing_templates = !valid;
 
